@@ -3,7 +3,7 @@
 
 # ## Loading data from folder
 
-# In[14]:
+# In[1]:
 
 import csv
 import cv2
@@ -28,11 +28,11 @@ for line in lines[1:]:
 
 # ## Displaying an image and checking integrity of the dataset
 
-# In[47]:
+# In[2]:
 
 import matplotlib.pyplot as plt
 import random
-#get_ipython().magic('matplotlib inline')
+get_ipython().magic('matplotlib inline')
 def display_im(X,y):
     index=random.randint(0,len(X))
     image=X[index].squeeze()
@@ -47,7 +47,7 @@ measurements=np.reshape(measurements,(-1))
 
 
 # Sample outputs from the dataset to check integrity
-#display_im(images,measurements)
+display_im(images,measurements)
 print('Size of measurements is',measurements.shape)
 print('One of the measurements is:',measurements[100])
 print('Size of image:',images[2].shape)
@@ -56,7 +56,7 @@ print('Size of images numpy array:',images.shape)
 
 # ## Splitting dataset into Training ,Validation and test set
 
-# In[48]:
+# In[3]:
 
 from sklearn.model_selection import train_test_split
 
@@ -76,9 +76,10 @@ print('X_test size = ',X_test.shape,'y_test size = ',y_test.shape)
 # In[49]:
 
 from keras.models import Sequential
-from keras.layers import Flatten,Dense
+from keras.layers import Flatten,Dense, Lambda
 
 model=Sequential()
+model.add(Lambda(lambda x:x/255.0-0.5, input_shape=(160,320,3)))
 model.add(Flatten(input_shape=(160,320,3)))
 model.add(Dense(1))
 
