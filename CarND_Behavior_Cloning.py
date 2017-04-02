@@ -3,7 +3,7 @@
 
 # ## Loading data from folder
 
-# In[6]:
+# In[17]:
 
 # To convert notebook to python script use
 # jupyter nbconvert --to script CarND_Behavior_Cloning.ipynb
@@ -34,7 +34,7 @@ for line in lines[1:]:
 
 # ## Displaying an image and checking integrity of the dataset
 
-# In[7]:
+# In[45]:
 
 import matplotlib.pyplot as plt
 import random
@@ -62,7 +62,7 @@ print('Size of images numpy array:',images.shape)
 
 # ## Splitting dataset into Training ,Validation and test set
 
-# In[3]:
+# In[63]:
 
 from sklearn.model_selection import train_test_split
 
@@ -75,7 +75,23 @@ X_train, X_valid, y_train, y_valid = train_test_split(X_train,y_train, test_size
 print('X_train size = ',X_train.shape,'y_train size = ',y_train.shape)
 print('X_valid size = ',X_valid.shape,'y_valid size = ',y_valid.shape)
 print('X_test size = ',X_test.shape,'y_test size = ',y_test.shape)
-X_train.shape[0]
+
+train_size=y_train.shape
+print (train_size[0])
+index_r=[]
+b=0
+for index,value in enumerate(y_train):
+    if value==0:
+        index_r.append(index)
+    else:
+        b=b+1
+
+X_train=np.delete(X_train,index_r[1:int((train_size[0]/3))],axis=0)
+y_train=np.delete(y_train,index_r[1:int((train_size[0]/3))],axis=0)
+print(X_train.shape)
+print(y_train.shape)
+print (len(index_r))
+print(b)
 
 
 # ## Algorithm
