@@ -26,7 +26,7 @@ for line in lines[1:]:
     current_path='../CarND-Behavioral-Cloning-P3/Udacity_data/data/IMG/'+filename
     image=cv2.imread(current_path)
     image=image[70:150,0:320]
-    image=cv2.resize(image,(200,66),interpolation=cv2.INTER_AREA)
+    #image=cv2.resize(image,(200,66),interpolation=cv2.INTER_AREA)
     images.append(image)
     measurement=float(line[3])
     measurements.append(measurement)
@@ -142,7 +142,7 @@ model.add(Dense(1))
 """
 
 # NVIDIA Model
-input_shape=(66,200,3)
+input_shape=(80,320,3)
 model=Sequential()
 #model.add(Cropping2D(cropping=((80,10),(0,0)),input_shape=(160,320,3)))
 model.add(Lambda(lambda x:x/127.5-1.0,input_shape=input_shape))
