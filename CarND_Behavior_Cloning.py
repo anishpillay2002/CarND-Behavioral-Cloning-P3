@@ -3,7 +3,7 @@
 
 # ## Loading data from folder
 
-# In[30]:
+# In[58]:
 
 # To convert notebook to python script use
 # jupyter nbconvert --to script CarND_Behavior_Cloning.ipynb
@@ -66,13 +66,36 @@ def read_images(sample_dt):
     measurements=[]
     for line in sample_dt:
         source_path=line[0]
-        if 'C:\\' in source_path:
-            #print(line)
-            source_path=line[0]
+        #print('source_path',source_path)
+        #print(if ("recorded_data\\IMG") in source_path)
+        if 'recorded data\IMG' in source_path:
+            #print('line',line)
             #print(source_path)
             filename=(source_path.split("\\"))[8]
             #print(filename)
             current_path='../CarND-Behavioral-Cloning-P3/recorded_data/IMG/'+filename
+            image=cv2.imread(current_path)
+            image=image[65:150,0:320]
+            image=cv2.resize(image,(200,66),interpolation=cv2.INTER_AREA)
+            images.append(image)
+            measurement=float(line[3])
+            measurements.append(measurement)
+        elif 'recorded_data_add\IMG' in source_path:
+            #print(source_path)
+            filename=(source_path.split("\\"))[8]
+            #print(filename)
+            current_path='../CarND-Behavioral-Cloning-P3/recorded_data_add/IMG/'+filename
+            image=cv2.imread(current_path)
+            image=image[65:150,0:320]
+            image=cv2.resize(image,(200,66),interpolation=cv2.INTER_AREA)
+            images.append(image)
+            measurement=float(line[3])
+            measurements.append(measurement)
+        elif 'recorded_data_jungle\IMG' in source_path:
+            #print(source_path)
+            filename=(source_path.split("\\"))[8]
+            #print(filename)
+            current_path='../CarND-Behavioral-Cloning-P3/recorded_data_jungle/IMG/'+filename
             image=cv2.imread(current_path)
             image=image[65:150,0:320]
             image=cv2.resize(image,(200,66),interpolation=cv2.INTER_AREA)
@@ -183,7 +206,7 @@ for index, value in enumerate(measurements[1:int(meas_len/4)]):
 
 
 
-# In[31]:
+# In[59]:
 
 def read_csv():
     with open('../CarND-Behavioral-Cloning-P3/Udacity_data/data/driving_log.csv') as csvfile:
@@ -218,7 +241,7 @@ def data_gen(lines, batch_size=30):
         
 
 
-# In[32]:
+# In[60]:
 
 lines=[]
 lines=read_csv()
