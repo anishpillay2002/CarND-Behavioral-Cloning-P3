@@ -43,8 +43,8 @@ class SimplePIController:
         return self.Kp * self.error + self.Ki * self.integral
 
 
-controller = SimplePIController(0.1, 0.002)
-set_speed = 9
+controller = SimplePIController(0.07, 0.002)   #0.07,0.002->best result #0.1,0.002
+set_speed = 5  #9
 controller.set_desired(set_speed)
 
 def process_img(image):
@@ -79,7 +79,7 @@ def telemetry(sid, data):
 
         throttle = controller.update(float(speed))
 
-        print(steering_angle, throttle)
+        #print(steering_angle, throttle)
         send_control(steering_angle, throttle)
 
         # save frame
