@@ -1,7 +1,7 @@
 
 # coding: utf-8
 
-# In[34]:
+# In[1]:
 
 #from support_fnc import data_gen,read_images,augment_brightness_camera_images,add_random_shadow,random_append_augment_images,img_resize
 import csv
@@ -13,7 +13,7 @@ from keras.models import load_model
 import matplotlib.pyplot as plt
 
 
-# In[90]:
+# In[44]:
 
 lines=[]
 def process_img(image):
@@ -28,11 +28,11 @@ def del_lines(lines):
     indices_del=[]
     lines1=[]
     for index,line in enumerate(lines[1:]):
-        if abs(float(line[3]))<0.03:
+        if abs(float(line[3]))<0.05:
             indices_del.append(index)
     len_ind_del=len(indices_del)
     indices_del=random.sample(indices_del,int(len_ind_del*0.9))
-    print(len_ind_del)
+    #print(len_ind_del)
     for index,line in enumerate(lines[1:]):
         if index not in indices_del:
             lines1.append(lines[index])
@@ -48,13 +48,13 @@ def read_csv(lines=[]):
         reader=csv.reader(csvfile)
         for line in reader:
             lines.append(line)
-    #with open('../CarND-Behavioral-Cloning-P3/recorded_data_jungle/driving_log.csv') as csvfile:
-        #reader=csv.reader(csvfile)
-        #for line in reader:
-            #lines.append(line)
-    print(len(lines))
+    with open('../CarND-Behavioral-Cloning-P3/recorded_data_add_add/driving_log.csv') as csvfile:
+        reader=csv.reader(csvfile)
+        for line in reader:
+            lines.append(line)
+    #print(len(lines))
     lines=del_lines(lines)
-    print(len(lines))
+    #print(len(lines))
     return lines
 
 def comp_side_cam(line,i):
@@ -62,9 +62,9 @@ def comp_side_cam(line,i):
     if (i==0): 
         measurement = float(line[3]) 
     elif (i==1): #left camera
-        measurement = float(line[3]) + 0.3
+        measurement = float(line[3]) + 0.2
     elif (i==2): #right camera
-        measurement = float(line[3]) - 0.3
+        measurement = float(line[3]) - 0.2
     return measurement
 
 def read_images(sample_dt):
@@ -91,9 +91,9 @@ def read_images(sample_dt):
                 images.append(image)
                 measurement=comp_side_cam(line,i)
                 measurements.append(measurement)
-            elif 'recorded_data_jungle\IMG' in source_path:
-                filename=(source_path.split("\\"))[8]
-                current_path='../CarND-Behavioral-Cloning-P3/recorded_data_jungle/IMG/'+filename
+            elif 'recorded_data_add_add\IMG' in source_path:
+                filename=(source_path.split("\\"))[-1]
+                current_path='../CarND-Behavioral-Cloning-P3/recorded_data_add_add/IMG/'+filename
                 image=cv2.imread(current_path)
                 image=process_img(image)
                 images.append(image)
@@ -113,6 +113,19 @@ def read_images(sample_dt):
     #plt.imshow(np.asarray(image_array))
     images.extend([np.fliplr(img) for img in images])
     measurements.extend([-angle for angle in measurements])
+    ind_del=[]
+    co=0
+    #print('len of meas',len(measurements))
+    for ind,val in enumerate(measurements):
+        if float(val)<0.03   and co <500 and float(val)>0.0:
+            del measurements[ind]
+            del images[ind]
+            co=co+1
+    #print('len of meas',len(measurements))
+    #plt.figure()
+    #plt.hist(measurements,30)
+    #plt.show()
+    
     return images,measurements
 
 
@@ -169,7 +182,7 @@ def random_append_augment_images(images,measurements):
     return images, measurements
 
 
-# In[91]:
+# In[45]:
 
 def data_gen(lines, batch_size=30):
     while True:
@@ -188,7 +201,7 @@ def data_gen(lines, batch_size=30):
         yield X,y
 
 
-# In[92]:
+# In[46]:
 
 lines=read_csv()
 #%matplotlib inline
