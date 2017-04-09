@@ -1,3 +1,12 @@
+My files:
+model file : CarND_Behavior_Cloning_Add_data.py
+run video : run2.mp4
+h5 file : model_add.h5
+writeup : writeup_report.md or .pdf or .docx
+
+
+
+
 # Behaviorial Cloning Project
 
 [![Udacity - Self-Driving Car NanoDegree](https://s3.amazonaws.com/udacity-sdc/github/shield-carnd.svg)](http://www.udacity.com/drive)
