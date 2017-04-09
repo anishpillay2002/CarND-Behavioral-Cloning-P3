@@ -1,7 +1,10 @@
-My files:
+# My files:
 model file : CarND_Behavior_Cloning_Add_data.py
+
 run video : run2.mp4
+
 h5 file : model_add.h5
+
 writeup : writeup_report.md or .pdf or .docx
 
 
