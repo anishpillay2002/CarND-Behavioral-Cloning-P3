@@ -8,6 +8,15 @@
 # To convert notebook to python script use
 # jupyter nbconvert --to script CarND_Behavior_Cloning.ipynb
 
+# To run
+# python CarND_Behavior_Cloning.py
+
+# Additional notebook has been created to further train the model and fine tune it.
+# name of notebook CarND_Behavior_Cloning_Add_data.ipynb
+
+# Run that instead of this
+
+# To run the model for the simulator, enter python drive.py model_add.h5 for additionally trained data and python drive.py model.h5 for the original model without additional finetuning
 
 import csv
 import cv2
@@ -17,54 +26,19 @@ from PIL import Image
 
 
 
-def read_data_udacity():
-    lines=[]
-    with open('../CarND-Behavioral-Cloning-P3/Udacity_data/data/driving_log.csv') as csvfile:
-        reader=csv.reader(csvfile)
-        for line in reader:
-            lines.append(line)
-    images=[]
-    measurements=[]
-    for line in lines[1:]:
-        source_path=line[0]
-        filename=source_path.split('/')[-1]
-        current_path='../CarND-Behavioral-Cloning-P3/Udacity_data/data/IMG/'+filename
-        image=cv2.imread(current_path)
-        image=image[65:150,0:320]
-        image=cv2.resize(image,(200,66),interpolation=cv2.INTER_AREA)
-        images.append(image)
-        measurement=float(line[3])
-        measurements.append(measurement)
-    return lines,images,measurements,image
 
-def read_data_recorded(images,measurements):
-    lines_1=[]
-    with open('../CarND-Behavioral-Cloning-P3/recorded_data/driving_log.csv') as csvfile:
-        reader=csv.reader(csvfile)
-        for line in reader:
-            lines_1.append(line)
+def process_img(image):
+    image=image[65:150,0:320]
+    image=cv2.resize(image,(200,66),interpolation=cv2.INTER_AREA) 
+    image = cv2.cvtColor(image, cv2.COLOR_BGR2YUV)
+    image = image/255.0 - 0.5
+    return image
 
-    for line in lines_1[1:]:
-        source_path=line[0]
-        fileloc=(source_path.split("\\"))
-        filename=fileloc[8]
-        #print(filename)
-        current_path='../CarND-Behavioral-Cloning-P3/recorded_data/IMG/'+filename
-        image=cv2.imread(current_path)
-        image=image[65:150,0:320]
-        image=cv2.resize(image,(200,66),interpolation=cv2.INTER_AREA)
-        images.append(image)
-        measurement=float(line[3])
-        measurements.append(measurement)
-    
-    images.extend([np.fliplr(img) for img in images])
-    measurements.extend([-angle for angle in measurements])
-    return images,measurements
 
 def read_images(sample_dt):
     images=[]
     measurements=[]
-    for line in sample_dt:
+    for line in sample_dt:sa
         source_path=line[0]
         #print('source_path',source_path)
         #print(if ("recorded_data\\IMG") in source_path)
@@ -75,8 +49,7 @@ def read_images(sample_dt):
             #print(filename)
             current_path='../CarND-Behavioral-Cloning-P3/recorded_data/IMG/'+filename
             image=cv2.imread(current_path)
-            image=image[65:150,0:320]
-            image=cv2.resize(image,(200,66),interpolation=cv2.INTER_AREA)
+            image=process_img(image)
             images.append(image)
             measurement=float(line[3])
             measurements.append(measurement)
@@ -86,8 +59,7 @@ def read_images(sample_dt):
             #print(filename)
             current_path='../CarND-Behavioral-Cloning-P3/recorded_data_add/IMG/'+filename
             image=cv2.imread(current_path)
-            image=image[65:150,0:320]
-            image=cv2.resize(image,(200,66),interpolation=cv2.INTER_AREA)
+            image=process_img(image)
             images.append(image)
             measurement=float(line[3])
             measurements.append(measurement)
@@ -97,8 +69,7 @@ def read_images(sample_dt):
             #print(filename)
             current_path='../CarND-Behavioral-Cloning-P3/recorded_data_jungle/IMG/'+filename
             image=cv2.imread(current_path)
-            image=image[65:150,0:320]
-            image=cv2.resize(image,(200,66),interpolation=cv2.INTER_AREA)
+            image=process_img(image)
             images.append(image)
             measurement=float(line[3])
             measurements.append(measurement)
@@ -107,8 +78,7 @@ def read_images(sample_dt):
             filename=source_path.split('/')[-1]
             current_path='../CarND-Behavioral-Cloning-P3/Udacity_data/data/IMG/'+filename
             image=cv2.imread(current_path)
-            image=image[65:150,0:320]
-            image=cv2.resize(image,(200,66),interpolation=cv2.INTER_AREA)
+            image=process_img(image)
             images.append(image)
             measurement=float(line[3])
             measurements.append(measurement)
@@ -131,7 +101,11 @@ def display_im(X,y):
 def color_change(img):
     return cv2.cvtColor(img, cv2.COLOR_BGR2HLS)
 
+
+
+
 def augment_brightness_camera_images(image):
+    image = cv2.cvtColor(image,cv2.COLOR_YUV2BGR)
     image1 = cv2.cvtColor(image,cv2.COLOR_BGR2HSV)
     image1 = np.array(image1, dtype = np.float64)
     random_bright = .5+np.random.uniform()
@@ -139,14 +113,16 @@ def augment_brightness_camera_images(image):
     image1[:,:,2][image1[:,:,2]>255]  = 255
     image1 = np.array(image1, dtype = np.uint8)
     image1 = cv2.cvtColor(image1,cv2.COLOR_HSV2BGR)
+    image = cv2.cvtColor(image,cv2.COLOR_BGR2YUV)
     return image1
 
 
 def add_random_shadow(image):
-    top_y = 320*np.random.uniform()
+    top_y = 200*np.random.uniform()
     top_x = 0
-    bot_x = 160
-    bot_y = 320*np.random.uniform()
+    bot_x = 66
+    bot_y = 200*np.random.uniform()
+    image = cv2.cvtColor(image,cv2.COLOR_YUV2BGR)
     image_hls = cv2.cvtColor(image,cv2.COLOR_BGR2HLS)
     shadow_mask = 0*image_hls[:,:,1]
     X_m = np.mgrid[0:image.shape[0],0:image.shape[1]][0]
@@ -162,11 +138,12 @@ def add_random_shadow(image):
         else:
             image_hls[:,:,1][cond0] = image_hls[:,:,1][cond0]*random_bright    
     image = cv2.cvtColor(image_hls,cv2.COLOR_HLS2BGR)
+    image = cv2.cvtColor(image,cv2.COLOR_BGR2YUV)
     return image
 
 def random_append_augment_images(images,measurements):
-    rand_arr=random.sample(list(range(1,len(measurements))),int(len(measurements)/5))
-    rand_arr_1=random.sample(list(range(1,len(measurements))),int(len(measurements)/5))
+    rand_arr=random.sample(list(range(1,len(measurements))),int(len(measurements)/3))
+    rand_arr_1=random.sample(list(range(1,len(measurements))),int(len(measurements)/3))
     for index,value in enumerate(measurements):
         if index in rand_arr:
             images.append(augment_brightness_camera_images(images[index]))
