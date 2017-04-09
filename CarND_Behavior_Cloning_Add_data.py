@@ -13,7 +13,7 @@ from keras.models import load_model
 import matplotlib.pyplot as plt
 
 
-# In[72]:
+# In[90]:
 
 lines=[]
 def process_img(image):
@@ -31,7 +31,8 @@ def del_lines(lines):
         if abs(float(line[3]))<0.03:
             indices_del.append(index)
     len_ind_del=len(indices_del)
-    indices_del=random.sample(indices_del,int(len_ind_del*0.95))
+    indices_del=random.sample(indices_del,int(len_ind_del*0.9))
+    print(len_ind_del)
     for index,line in enumerate(lines[1:]):
         if index not in indices_del:
             lines1.append(lines[index])
@@ -47,10 +48,10 @@ def read_csv(lines=[]):
         reader=csv.reader(csvfile)
         for line in reader:
             lines.append(line)
-    with open('../CarND-Behavioral-Cloning-P3/recorded_data_jungle/driving_log.csv') as csvfile:
-        reader=csv.reader(csvfile)
-        for line in reader:
-            lines.append(line)
+    #with open('../CarND-Behavioral-Cloning-P3/recorded_data_jungle/driving_log.csv') as csvfile:
+        #reader=csv.reader(csvfile)
+        #for line in reader:
+            #lines.append(line)
     print(len(lines))
     lines=del_lines(lines)
     print(len(lines))
@@ -168,7 +169,7 @@ def random_append_augment_images(images,measurements):
     return images, measurements
 
 
-# In[73]:
+# In[91]:
 
 def data_gen(lines, batch_size=30):
     while True:
@@ -187,7 +188,7 @@ def data_gen(lines, batch_size=30):
         yield X,y
 
 
-# In[74]:
+# In[92]:
 
 lines=read_csv()
 #%matplotlib inline
